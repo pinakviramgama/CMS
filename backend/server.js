@@ -24,11 +24,14 @@ app.use("/api/auth", authRoutes);
 app.use("/admin", adminRouter);
 app.use("/", pendingRoutes);
 
-// Serve frontend
-app.use(express.static(path.join(__dirname, "../frontend/dist")));
+const path = require("path");
+
+app.use(express.static(path.join(__dirname, "../fronted/vite-project/dist")));
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+  res.sendFile(
+    path.resolve(__dirname, "../fronted/vite-project/dist/index.html"),
+  );
 });
 
 const PORT = process.env.PORT || 3000;
