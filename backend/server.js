@@ -12,6 +12,7 @@ dotenv.config();
 connectDB();
 
 const app = express();
+
 const allowedOrigins = [
   "http://localhost:5173",
   "https://cms-4-74hb.onrender.com",
@@ -27,11 +28,18 @@ app.use(
       }
     },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
   }),
 );
 
-// ✅ Preflight Fix
-app.options("*", cors());
+// ✅ Proper Preflight Fix
+app.options(
+  "*",
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  }),
+);
 
 app.use(express.json());
 
@@ -40,12 +48,12 @@ app.use("/api/auth", authRoutes);
 app.use("/admin", adminRouter);
 app.use("/", pendingRoutes);
 
-// Serve frontend build
-app.use(express.static(path.join(__dirname, "../fronted/vite-project/dist")));
+// ✅ Serve frontend build
+app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-// SPA fallback
+// ✅ SPA fallback
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../fronted/vite-project/dist/index.html"));
+  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
 });
 
 const PORT = process.env.PORT || 3000;
