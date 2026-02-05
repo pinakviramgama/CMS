@@ -1,46 +1,36 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import NotFoundPage from "./NotFound";
 import { useSemester } from "./semesterContext";
 
-const allowedDepts = [
-  "cse",
-  "aids",
-  "ec",
-  "ic",
-  "civil",
-  "electrical",
-  "mechanical"
-];
+const allowedDepts = ["cse", "aids", "ec", "ic", "civil", "electrical", "mechanical"];
 
 const SemesterPage = () => {
   const navigate = useNavigate();
-  const { dept: deptParam, sem: semParam } = useParams();
-  const { setDept, setSem, token } = useSemester();
+  const { dept: contextDept, sem: contextSem, setDept, setSem } = useSemester();
+  const { dept: paramDept, sem: paramSem } = useParams();
 
-  // Convert params
-  const dept = deptParam?.toLowerCase();
-  const sem = parseInt(semParam, 10);
+  const dept = paramDept;
+  const sem = Number(paramSem);
 
-  // Validate route params
-  if (!allowedDepts.includes(dept) || isNaN(sem) || sem < 1 || sem > 8) return <NotFoundPage />;
-
-  // Update context only (do NOT touch localStorage)
-  useEffect(() => {
-    setDept(dept);
-    setSem(sem);
-  }, [dept, sem, setDept, setSem]);
+  const token = localStorage.getItem("token");
 
   const [role, setRole] = useState(null);
   const [subjects, setSubjects] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [subjectName, setSubjectName] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loadingSubject, setLoadingSubject] = useState(false);
 
-  // Fetch user role once
+  if (!allowedDepts.includes(dept)) {
+    toast.error("Invalid department");
+    navigate("/not-found");
+    return null;
+  }
+
+  // Fetch user role
   useEffect(() => {
-    if (!token) return;
+    if (!token) return navigate("/login");
+
     const fetchRole = async () => {
       try {
         const res = await fetch("http://localhost:3000/api/auth/me", {
@@ -54,12 +44,14 @@ const SemesterPage = () => {
         toast.error("Failed to fetch user info");
       }
     };
-    fetchRole();
-  }, [token]);
 
-  // Fetch subjects for this dept/sem
+    fetchRole();
+  }, [token, navigate]);
+
+  // Fetch subjects
   useEffect(() => {
     if (!token) return;
+
     const fetchSubjects = async () => {
       try {
         const res = await fetch(`http://localhost:3000/admin/dept/${dept}/sem/${sem}/get-subjects`, {
@@ -77,16 +69,17 @@ const SemesterPage = () => {
         toast.error("Failed to fetch subjects");
       }
     };
+
     fetchSubjects();
   }, [dept, sem, token]);
 
-  // Add new subject (admin)
+  // Add subject
   const handleAddSubject = async (e) => {
     e.preventDefault();
     if (!subjectName.trim()) return toast.error("Subject name cannot be empty");
     if (!token) return toast.error("Not logged in");
 
-    setLoading(true);
+    setLoadingSubject(true);
     try {
       const res = await fetch(`http://localhost:3000/admin/dept/${dept}/sem/${sem}/add-subject`, {
         method: "POST",
@@ -101,7 +94,7 @@ const SemesterPage = () => {
 
       // Refresh subjects
       const subjectsRes = await fetch(`http://localhost:3000/admin/dept/${dept}/sem/${sem}/get-subjects`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       const subjectsData = await subjectsRes.json();
       setSubjects(subjectsData.subjects || []);
@@ -109,7 +102,7 @@ const SemesterPage = () => {
       console.error(err);
       toast.error(err.message || "Failed to add subject");
     } finally {
-      setLoading(false);
+      setLoadingSubject(false);
     }
   };
 
@@ -133,8 +126,8 @@ const SemesterPage = () => {
             value={subjectName}
             onChange={(e) => setSubjectName(e.target.value)}
           />
-          <button className="btn btn-success" disabled={loading}>
-            {loading ? "Saving..." : "Save Subject"}
+          <button className="btn btn-success" disabled={loadingSubject}>
+            {loadingSubject ? "Saving..." : "Save Subject"}
           </button>
         </form>
       )}

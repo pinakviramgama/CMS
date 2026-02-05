@@ -3,32 +3,31 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSemester } from "./semesterContext";
 const Header = () => {
   const navigate = useNavigate();
-  const { dept, sem, token, setToken, setName } = useSemester();
+  const { dept, sem, setToken, setName } = useSemester();
 
-  const handleLogout = () => {
-    localStorage.clear();
-    setToken(null);
-    setName(null);
-    navigate("/login");
-  };
+  const token = localStorage.getItem("token"); // use localStorage directly
+  const name = localStorage.getItem("name");
+const handleLogout = () => {
+  localStorage.clear();   // remove token and name
+  setToken(null);         // context token
+  setName(null);          // context name
+  setDept(null);          // optional: reset dept
+  setSem(null);           // optional: reset sem
+  navigate("/login");
+};
 
-  // Use context values (or fallback to mechanical/2)
+
   const currentDept = dept || "mechanical";
   const currentSem = sem || 2;
-  const name = localStorage.getItem("name");
 
   return (
     <Navbar bg="light" expand="lg" sticky="top">
       <Container>
-        <Navbar.Brand as={Link} to={`/dept/${currentDept}/sem/${currentSem}`}>
-          CMS
-        </Navbar.Brand>
+        <Navbar.Brand as={Link} to={`/dept/${currentDept}/sem/${currentSem}`}>CMS</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link as={Link} to={`/dept/${currentDept}/sem/${currentSem}`}>
-              Home
-            </Nav.Link>
+            <Nav.Link as={Link} to={`/dept/${currentDept}/sem/${currentSem}`}>Home</Nav.Link>
             <NavDropdown title="Account" id="basic-nav-dropdown">
               <NavDropdown.Item as={Link} to={`/dept/${currentDept}/sem/${currentSem}/profile`}>
                 Profile
@@ -46,13 +45,9 @@ const Header = () => {
           </Form>
 
           {token ? (
-            <Button variant="danger" onClick={handleLogout}>
-              Logout
-            </Button>
+            <Button variant="danger" onClick={handleLogout}>Logout</Button>
           ) : (
-            <Button variant="primary" onClick={() => navigate("/login")}>
-              Login
-            </Button>
+            <Button variant="primary" onClick={() => navigate("/login")}>Login</Button>
           )}
         </Navbar.Collapse>
       </Container>

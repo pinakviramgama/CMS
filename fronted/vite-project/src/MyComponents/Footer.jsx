@@ -1,10 +1,9 @@
 import { Col, Container, Row } from "react-bootstrap";
 import { FaInstagram, FaLinkedin } from "react-icons/fa"; // react-icons
 import { Link } from "react-router-dom";
-import { useSemester } from "./semesterContext";
 
 const Footer = () => {
-  const { originalSem } = useSemester();
+  const originalSem = 1;
 
   const socialLinks = [
     { icon: <FaInstagram />, url: "https://www.instagram.com/syntaxwithsoul/" },

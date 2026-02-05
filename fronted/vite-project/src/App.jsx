@@ -1,4 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js'; // optional for dropdowns, modals
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -18,10 +19,11 @@ import SubjectPage from './MyComponents/SubjectPage';
 
 function AppContent() {
   const location = useLocation();
-  const hideHeader = ['/login', '/signup'].includes(location.pathname);
   const { dept, sem, loading } = useSemester();
+  const hideHeader = ['/login', '/signup'].includes(location.pathname);
 
-  if (loading) return <div>Loading...</div>; // show spinner/loading if needed
+  // Wait for context to load
+  if (loading) return null;
 
   return (
     <>
@@ -29,16 +31,17 @@ function AppContent() {
       {!hideHeader && <Header />}
 
       <Routes>
-        {/* Redirect root to login if dept/sem missing */}
-        <Route path='/' element={dept && sem ? <Navigate to={`/dept/${dept}/sem/${sem}`} /> : <Navigate to="/login" />} />
+        <Route
+          path="/"
+          element={dept && sem ? <Navigate to={`/dept/${dept}/sem/${sem}`} /> : <Navigate to="/login" />}
+        />
+        <Route path="/login" element={<SignupGuard><Login /></SignupGuard>} />
+        <Route path="/signup" element={<SignupGuard><Signup /></SignupGuard>} />
 
-        <Route path='/dept/:dept/sem/:sem/profile' element={<Profile />} />
-        <Route path='/dept/:dept/sem/:sem' element={<ProtectedRoute><SemesterPage /></ProtectedRoute>} />
-        <Route path='/admin/:dept/sem/:sem/subject/:subjectName' element={<SubjectPage />} />
-        <Route path='/admin/pending-approvals' element={<PendingApprovals />} />
-
-        <Route path='/login' element={<SignupGuard><Login /></SignupGuard>} />
-        <Route path='/signup' element={<SignupGuard><Signup /></SignupGuard>} />
+        <Route path="/dept/:dept/sem/:sem" element={<ProtectedRoute><SemesterPage /></ProtectedRoute>} />
+        <Route path="/dept/:dept/sem/:sem/profile" element={<Profile />} />
+        <Route path="/admin/pending-approvals" element={<PendingApprovals />} />
+        <Route path="/admin/:dept/sem/:sem/subject/:subjectName" element={<SubjectPage />} />
       </Routes>
 
       <Footer />
@@ -46,12 +49,10 @@ function AppContent() {
   );
 }
 
-function App() {
+export default function App() {
   return (
     <SemesterProvider>
       <AppContent />
     </SemesterProvider>
   );
 }
-
-export default App;

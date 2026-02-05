@@ -1,49 +1,50 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 const SemesterContext = createContext();
 
-export const SemesterProvider = ({ children }) => {
-  const navigate = useNavigate();
-
-  const [dept, setDept] = useState(localStorage.getItem("dept") || "");
-  const [sem, setSem] = useState(localStorage.getItem("sem") || "");
+export function SemesterProvider({ children }) {
+  const [dept, setDept] = useState(null);
+  const [sem, setSem] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [name, setName] = useState(localStorage.getItem("name"));
   const [loading, setLoading] = useState(true);
 
+  // Restore dept/sem from localStorage if present
   useEffect(() => {
-    // simulate async load or check for login
-    const storedDept = localStorage.getItem("dept");
-    const storedSem = localStorage.getItem("sem");
-
-    if (storedDept && storedSem) {
-      setDept(storedDept);
-      setSem(storedSem);
+    const savedDept = localStorage.getItem("dept");
+    const savedSem = localStorage.getItem("sem");
+    if (savedDept && savedSem) {
+      setDept(savedDept);
+      setSem(parseInt(savedSem));
     }
     setLoading(false);
   }, []);
 
-  const setSemester = (department, semester) => {
-    localStorage.setItem("dept", department);
-    localStorage.setItem("sem", semester);
-    setDept(department);
-    setSem(semester);
-  };
+  // Sync token and name with localStorage
+  useEffect(() => {
+    if (token) localStorage.setItem("token", token);
+    else localStorage.removeItem("token");
 
-  const clearSemester = () => {
-    localStorage.removeItem("dept");
-    localStorage.removeItem("sem");
-    setDept("");
-    setSem("");
-    navigate("/login");
-  };
+    if (name) localStorage.setItem("name", name);
+    else localStorage.removeItem("name");
+  }, [token, name]);
+
+  // Optional: sync dept/sem to localStorage too
+  useEffect(() => {
+    if (dept) localStorage.setItem("dept", dept);
+    else localStorage.removeItem("dept");
+
+    if (sem) localStorage.setItem("sem", sem);
+    else localStorage.removeItem("sem");
+  }, [dept, sem]);
 
   return (
-    <SemesterContext.Provider
-      value={{ dept, sem, setSemester, clearSemester, loading }}
-    >
+    <SemesterContext.Provider value={{ dept, setDept, sem, setSem, token, setToken, name, setName, loading }}>
       {children}
     </SemesterContext.Provider>
   );
-};
+}
 
-export const useSemester = () => useContext(SemesterContext);
+export function useSemester() {
+  return useContext(SemesterContext);
+}
