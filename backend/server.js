@@ -24,8 +24,6 @@ app.use("/api/auth", authRoutes);
 app.use("/admin", adminRouter);
 app.use("/", pendingRoutes);
 
-const path = require("path");
-
 app.use(express.static(path.join(__dirname, "../fronted/vite-project/dist")));
 
 app.get("*", (req, res) => {
