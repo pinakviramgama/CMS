@@ -1,13 +1,13 @@
 # Node modules
 node_modules/
+backend/node_modules/
+frontend/vite-project/node_modules/
 
-# Environment variables
+# Env files
 .env
 
-# Logs
-logs
-*.log
-npm-debug.log*
+# Uploads (if any)
+uploads/
 
-# OS files
-.DS_Store
+# Logs
+*.log

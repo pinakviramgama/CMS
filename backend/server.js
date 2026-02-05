@@ -16,17 +16,24 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Test route
-app.get("/", (req, res) => {
-  res.send("Backend is running");
+// Serve Vite frontend build
+app.use(express.static(path.join(__dirname, "../frontend/vite-project/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(
+    path.resolve(__dirname, "../frontend/vite-project/dist/index.html"),
+  );
 });
 
-// Routes
+// API routes
 app.use("/api/auth", authRoutes);
 app.use("/admin", adminRouter);
 app.use("/", pendingRoutes);
 
+// Test route (optional)
+app.get("/test", (req, res) => {
+  res.send("Backend is running");
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-/////////////end of file
