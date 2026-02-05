@@ -12,7 +12,27 @@ dotenv.config();
 connectDB();
 
 const app = express();
-app.use(cors());
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://cms-4-74hb.onrender.com",
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  }),
+);
+
+// ✅ Preflight Fix
+app.options("*", cors());
+
 app.use(express.json());
 
 // API routes
@@ -20,10 +40,10 @@ app.use("/api/auth", authRoutes);
 app.use("/admin", adminRouter);
 app.use("/", pendingRoutes);
 
-// Serve Vite frontend build
+// Serve frontend build
 app.use(express.static(path.join(__dirname, "../fronted/vite-project/dist")));
 
-// SPA wildcard route (must be after API routes)
+// SPA fallback
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../fronted/vite-project/dist/index.html"));
 });

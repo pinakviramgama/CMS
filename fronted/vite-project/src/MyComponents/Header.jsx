@@ -3,19 +3,21 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSemester } from "./semesterContext";
 const Header = () => {
   const navigate = useNavigate();
-  const { dept, sem, setToken, setName } = useSemester();
+const { dept, sem, token, setToken, setName, setDept, setSem } = useSemester();
 
-  const token = localStorage.getItem("token"); // use localStorage directly
   const name = localStorage.getItem("name");
-const handleLogout = () => {
-  localStorage.clear();   // remove token and name
-  setToken(null);         // context token
-  setName(null);          // context name
-  setDept(null);          // optional: reset dept
-  setSem(null);           // optional: reset sem
+
+  const handleLogout = () => {
+  localStorage.clear();
+
+  setToken(null);
+  setName(null);
+
+  setDept(null);
+  setSem(null);
+
   navigate("/login");
 };
-
 
   const currentDept = dept || "mechanical";
   const currentSem = sem || 2;
