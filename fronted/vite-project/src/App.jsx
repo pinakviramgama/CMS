@@ -2,6 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 import { SemesterProvider, useSemester } from "./MyComponents/semesterContext";
 
 import Footer from './MyComponents/Footer';
@@ -18,15 +19,18 @@ import SubjectPage from './MyComponents/SubjectPage';
 function AppContent() {
   const location = useLocation();
   const hideHeader = ['/login', '/signup'].includes(location.pathname);
-  const { dept, sem } = useSemester();
+  const { dept, sem, loading } = useSemester();
+
+  if (loading) return <div>Loading...</div>; // show spinner/loading if needed
 
   return (
     <>
       <ToastContainer position="top-right" autoClose={3000} />
-      {!hideHeader && dept && sem && <Header />}
+      {!hideHeader && <Header />}
 
       <Routes>
-        <Route path='/' element={dept && sem ? <Navigate to={`/dept/${dept}/sem/${sem}`} /> : null} />
+        {/* Redirect root to login if dept/sem missing */}
+        <Route path='/' element={dept && sem ? <Navigate to={`/dept/${dept}/sem/${sem}`} /> : <Navigate to="/login" />} />
 
         <Route path='/dept/:dept/sem/:sem/profile' element={<Profile />} />
         <Route path='/dept/:dept/sem/:sem' element={<ProtectedRoute><SemesterPage /></ProtectedRoute>} />

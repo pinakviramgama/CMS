@@ -1,31 +1,45 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const SemesterContext = createContext();
 
 export const SemesterProvider = ({ children }) => {
-  // Original user info from login (never change)
-  const [originalDept] = useState(localStorage.getItem("dept"));
-  const [originalSem] = useState(parseInt(localStorage.getItem("sem"), 10));
-  const [name] = useState(localStorage.getItem("name"));
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  const navigate = useNavigate();
 
-  // Currently viewed dept/sem (can change for navigation)
-  const [dept, setDept] = useState(originalDept);
-  const [sem, setSem] = useState(originalSem);
+  const [dept, setDept] = useState(localStorage.getItem("dept") || "");
+  const [sem, setSem] = useState(localStorage.getItem("sem") || "");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // simulate async load or check for login
+    const storedDept = localStorage.getItem("dept");
+    const storedSem = localStorage.getItem("sem");
+
+    if (storedDept && storedSem) {
+      setDept(storedDept);
+      setSem(storedSem);
+    }
+    setLoading(false);
+  }, []);
+
+  const setSemester = (department, semester) => {
+    localStorage.setItem("dept", department);
+    localStorage.setItem("sem", semester);
+    setDept(department);
+    setSem(semester);
+  };
+
+  const clearSemester = () => {
+    localStorage.removeItem("dept");
+    localStorage.removeItem("sem");
+    setDept("");
+    setSem("");
+    navigate("/login");
+  };
 
   return (
     <SemesterContext.Provider
-      value={{
-        dept,
-        sem,
-        setDept,
-        setSem,
-        name,
-        token,
-        setToken,
-        originalDept,
-        originalSem
-      }}
+      value={{ dept, sem, setSemester, clearSemester, loading }}
     >
       {children}
     </SemesterContext.Provider>
