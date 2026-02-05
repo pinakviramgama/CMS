@@ -25,7 +25,9 @@ const Login = () => {
 
     setLoading(true);
 
-    const API = import.meta.env.VITE_API_URL;
+    const API =
+  import.meta.env.VITE_API_URL || "https://cms-4-74hb.onrender.com";
+
     try {
       const res = await fetch(`${API}/api/auth/login`, {
         method: "POST",
