@@ -12,28 +12,33 @@ dotenv.config();
 connectDB();
 
 const app = express();
-
 app.use(cors());
 app.use(express.json());
-
-// Serve Vite frontend build
-app.use(express.static(path.join(__dirname, "../frontend/vite-project/dist")));
-
-app.get("*", (req, res) => {
-  res.sendFile(
-    path.resolve(__dirname, "../frontend/vite-project/dist/index.html"),
-  );
-});
 
 // API routes
 app.use("/api/auth", authRoutes);
 app.use("/admin", adminRouter);
 app.use("/", pendingRoutes);
 
-// Test route (optional)
-app.get("/test", (req, res) => {
-  res.send("Backend is running");
+// Serve Vite frontend build
+app.use(express.static(path.join(__dirname, "../frontend/vite-project/dist")));
+
+// SPA wildcard route (after API routes!)
+app.get("*", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "../frontend/vite-project/dist/index.html"),
+  );
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Serve frontend
+app.use(express.static(path.join(__dirname, "../frontend/vite-project/dist")));
+
+// SPA wildcard route
+app.get("*", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "../frontend/vite-project/dist/index.html"),
+  );
+});
