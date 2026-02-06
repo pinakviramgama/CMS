@@ -9,6 +9,8 @@ function PendingApprovals() {
   const token = localStorage.getItem("token");
   const [role, setRole] = useState(null);
 
+   const API =import.meta.env.VITE_API_URL || "https://cms-4-74hb.onrender.com";
+
   const navigate = useNavigate();
 
   /* ========================= FETCH ROLE ========================= */
@@ -17,7 +19,7 @@ function PendingApprovals() {
       if (!token) return setRole("student");
 
       try {
-        const res = await fetch("http://localhost:3000/api/auth/me", {
+        const res = await fetch(`${API}/api/auth/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -42,7 +44,7 @@ function PendingApprovals() {
 /* ===================== FETCH PENDING MATERIALS ===================== */
 const fetchPendingMaterials = async () => {
   try {
-    const res = await fetch("http://localhost:3000/pending-materials", {
+    const res = await fetch(`${API}/pending-materials`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -60,7 +62,7 @@ const fetchPendingMaterials = async () => {
 /* ===================== FETCH PENDING LINKS ===================== */
 const fetchPendingLinks = async () => {
   try {
-    const res = await fetch("http://localhost:3000/pending-links", {
+    const res = await fetch(`${API}/pending-links`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -87,7 +89,7 @@ const fetchPendingLinks = async () => {
   const approveMaterial = async (id) => {
     try {
       const res = await fetch(
-        `http://localhost:3000/pending-materials/${id}/approve`,
+        `${API}/pending-materials/${id}/approve`,
         {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },
@@ -110,7 +112,7 @@ const fetchPendingLinks = async () => {
 
     try {
       const res = await fetch(
-        `http://localhost:3000/pending-materials/${id}/reject`,
+        `${API}/pending-materials/${id}/reject`,
         {
           method: "POST",
           headers: {
@@ -135,7 +137,7 @@ const fetchPendingLinks = async () => {
   const approveLink = async (id) => {
     try {
       const res = await fetch(
-        `http://localhost:3000/pending-links/${id}/approve`,
+        `${API}/pending-links/${id}/approve`,
         {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },
@@ -158,7 +160,7 @@ const fetchPendingLinks = async () => {
 
     try {
       const res = await fetch(
-        `http://localhost:3000/pending-links/${id}/reject`,
+        `${API}/pending-links/${id}/reject`,
         {
           method: "POST",
           headers: {
@@ -212,7 +214,7 @@ const fetchPendingLinks = async () => {
                 href={
                   item.fileUrl.startsWith("http")
                     ? item.fileUrl
-                    : `http://localhost:3000${item.fileUrl}`
+                    : `${API}${item.fileUrl}`
                 }
                 target="_blank"
                 rel="noreferrer"

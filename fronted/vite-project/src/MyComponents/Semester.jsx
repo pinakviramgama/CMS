@@ -27,13 +27,14 @@ const SemesterPage = () => {
     return null;
   }
 
+  const API =import.meta.env.VITE_API_URL || "https://cms-4-74hb.onrender.com";
   // Fetch user role
   useEffect(() => {
     if (!token) return navigate("/login");
 
     const fetchRole = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/auth/me", {
+        const res = await fetch(`${API}/api/auth/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch user info");
@@ -54,7 +55,7 @@ const SemesterPage = () => {
 
     const fetchSubjects = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/admin/dept/${dept}/sem/${sem}/get-subjects`, {
+        const res = await fetch(`${API}/admin/dept/${dept}/sem/${sem}/get-subjects`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) {
@@ -81,7 +82,7 @@ const SemesterPage = () => {
 
     setLoadingSubject(true);
     try {
-      const res = await fetch(`http://localhost:3000/admin/dept/${dept}/sem/${sem}/add-subject`, {
+      const res = await fetch(`${API}/admin/dept/${dept}/sem/${sem}/add-subject`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ name: subjectName.trim() }),
@@ -93,7 +94,7 @@ const SemesterPage = () => {
       setShowForm(false);
 
       // Refresh subjects
-      const subjectsRes = await fetch(`http://localhost:3000/admin/dept/${dept}/sem/${sem}/get-subjects`, {
+      const subjectsRes = await fetch(`${API}/admin/dept/${dept}/sem/${sem}/get-subjects`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const subjectsData = await subjectsRes.json();

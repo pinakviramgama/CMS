@@ -19,6 +19,8 @@ function Profile() {
   const [uploadHistory, setUploadHistory] = useState([]);
   const [showAllHistory, setShowAllHistory] = useState(false);
 
+   const API =import.meta.env.VITE_API_URL || "https://cms-4-74hb.onrender.com";
+
   /* ===================== INIT CONTEXT FROM LOCALSTORAGE ===================== */
   useEffect(() => {
     const storedDept = localStorage.getItem("dept");
@@ -33,7 +35,7 @@ function Profile() {
   const fetchMe = async () => {
     if (!token) return;
     try {
-      const res = await fetch("http://localhost:3000/api/auth/me", {
+      const res = await fetch(`${API}/api/auth/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -54,7 +56,7 @@ function Profile() {
   const fetchSubjects = async () => {
     if (!dept || !sem) return;
     try {
-      const res = await fetch(`http://localhost:3000/admin/dept/${dept}/sem/${sem}/get-subjects`);
+      const res = await fetch(`${API}/admin/dept/${dept}/sem/${sem}/get-subjects`);
       const data = await res.json();
       const subjectArray = Array.isArray(data)
         ? data
@@ -73,7 +75,7 @@ function Profile() {
     if (!dept || !sem || !selectedSubject) return;
     try {
       const res = await fetch(
-        `http://localhost:3000/admin/${dept}/sem/${sem}/subject/${selectedSubject}`
+        `${API}/admin/${dept}/sem/${sem}/subject/${selectedSubject}`
       );
       const data = await res.json();
       setMaterials({
@@ -90,7 +92,7 @@ function Profile() {
   const fetchUploadHistory = async () => {
     if (!token) return;
     try {
-      const res = await fetch("http://localhost:3000/student/uploads", {
+      const res = await fetch(`${API}/student/uploads`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -106,7 +108,7 @@ const handleSemesterChange = async (newSem) => {
 
   try {
     // 1️⃣ Update semester in backend
-    const res = await fetch("http://localhost:3000/api/auth/update-semester", {
+    const res = await fetch(`${API}/api/auth/update-semester`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -146,7 +148,7 @@ const handleSemesterChange = async (newSem) => {
 
     try {
       const res = await fetch(
-        `http://localhost:3000/pending-material/upload/${dept}/${sem}/${selectedSubject}`,
+        `${API}/pending-material/upload/${dept}/${sem}/${selectedSubject}`,
         {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },

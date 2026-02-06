@@ -24,12 +24,14 @@ const SubjectPage = () => {
 
   const token = localStorage.getItem("token");
 
+   const API =import.meta.env.VITE_API_URL || "https://cms-4-74hb.onrender.com";
+
   /* ==================== FETCH ROLE ==================== */
   useEffect(() => {
     const fetchRole = async () => {
       if (!token) return setRole("student");
       try {
-        const res = await fetch("http://localhost:3000/api/auth/me", {
+        const res = await fetch(`${API}/api/auth/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -46,7 +48,7 @@ const SubjectPage = () => {
     if (!token) return;
     try {
       const res = await fetch(
-        `http://localhost:3000/admin/${dept}/sem/${sem}/subject/${subjectName}`,
+        `${API}/admin/${dept}/sem/${sem}/subject/${subjectName}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const data = await res.json();
@@ -69,8 +71,8 @@ const SubjectPage = () => {
     try {
       const url =
         role === "admin"
-          ? "http://localhost:3000/pending-links"
-          : `http://localhost:3000/student/pending-links/${dept}/${sem}/${subjectName}`;
+          ? `${API}/pending-links`
+          : `${API}/student/pending-links/${dept}/${sem}/${subjectName}`;
       const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       setPendingLinks(data || []);
@@ -95,7 +97,7 @@ const SubjectPage = () => {
       formData.append("type", type);
 
       const res = await fetch(
-        `http://localhost:3000/admin/${dept}/sem/${sem}/subject/${subjectName}/upload`,
+        `${API}/admin/${dept}/sem/${sem}/subject/${subjectName}/upload`,
         { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: formData }
       );
       const data = await res.json();
@@ -120,7 +122,7 @@ const SubjectPage = () => {
       formData.append("type", type);
 
       const res = await fetch(
-        `http://localhost:3000/student/pending-material/upload/${dept}/${sem}/${subjectName}`,
+        `${API}/student/pending-material/upload/${dept}/${sem}/${subjectName}`,
         { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: formData }
       );
       const data = await res.json();
@@ -140,7 +142,7 @@ const SubjectPage = () => {
     if (!window.confirm("Delete this PDF?")) return;
     try {
       const res = await fetch(
-        `http://localhost:3000/admin/dept/${dept}/sem/${sem}/subject/${subjectName}/delete-material`,
+        `${API}/admin/dept/${dept}/sem/${sem}/subject/${subjectName}/delete-material`,
         {
           method: "DELETE",
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
@@ -165,7 +167,7 @@ const SubjectPage = () => {
     if (!linkTitle || !linkUrl) return alert("Title & URL required");
     try {
       const res = await fetch(
-        `http://localhost:3000/admin/dept/${dept}/sem/${sem}/subject/${subjectName}/add-link`,
+        `${API}/admin/dept/${dept}/sem/${sem}/subject/${subjectName}/add-link`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
@@ -185,7 +187,7 @@ const SubjectPage = () => {
   const handleDeleteLink = async (linkId) => {
     try {
       const res = await fetch(
-        `http://localhost:3000/admin/dept/${dept}/sem/${sem}/subject/${subjectName}/links/${linkId}`,
+        `${API}/admin/dept/${dept}/sem/${sem}/subject/${subjectName}/links/${linkId}`,
         { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }
       );
       if (!res.ok) throw new Error("Delete failed");
@@ -200,7 +202,7 @@ const SubjectPage = () => {
     if (!requestTitle || !requestUrl) return alert("Title & URL required");
     try {
       const res = await fetch(
-        `http://localhost:3000/student/pending-link/${dept}/${sem}/${subjectName}`,
+        `${API}/student/pending-link/${dept}/${sem}/${subjectName}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
@@ -225,7 +227,7 @@ const SubjectPage = () => {
 const [linkHistory, setLinkHistory] = useState([]);
 const fetchLinkHistory = async () => {
   try {
-    const res = await fetch("http://localhost:3000/student/link-history", {
+    const res = await fetch(`${API}/student/link-history`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -312,7 +314,7 @@ const fetchLinkHistory = async () => {
                     <button
                       className="btn btn-sm btn-primary flex-grow-1"
                       onClick={() =>
-                        window.open(pdf.fileUrl.startsWith("http") ? pdf.fileUrl : `http://localhost:3000${pdf.fileUrl}`, "_blank")
+                        window.open(pdf.fileUrl.startsWith("http") ? pdf.fileUrl : `${API}${pdf.fileUrl}`, "_blank")
                       }
                     >
                       View

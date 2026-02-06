@@ -15,6 +15,8 @@ import "react-toastify/dist/ReactToastify.css";
       const navigate = useNavigate();
 const handleSubmit = async (e) => {
   e.preventDefault();
+   const API =import.meta.env.VITE_API_URL || "https://cms-4-74hb.onrender.com";
+
 
   if (!name || !email || !password || !department || !semester) {
     toast.error("Please fill all fields!");
@@ -37,7 +39,7 @@ const handleSubmit = async (e) => {
   try {
     // 1️⃣ SIGNUP
     const signupRes = await fetch(
-      "http://localhost:3000/api/auth/signup",
+      `${API}/api/auth/signup`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -60,7 +62,7 @@ const handleSubmit = async (e) => {
 
     // 2️⃣ LOGIN
     const loginRes = await fetch(
-      "http://localhost:3000/api/auth/login",
+      `${API}http://localhost:3000/api/auth/login`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

@@ -15,6 +15,8 @@ const Login = () => {
   // ✅ Destructure only what exists in your context
   const { setDept, setSem, setToken, setName } = useSemester();
 
+   const API =import.meta.env.VITE_API_URL || "https://cms-4-74hb.onrender.com";
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -24,9 +26,6 @@ const Login = () => {
     }
 
     setLoading(true);
-
-    const API =
-  import.meta.env.VITE_API_URL || "https://cms-4-74hb.onrender.com";
 
     try {
       const res = await fetch(`${API}/api/auth/login`, {
