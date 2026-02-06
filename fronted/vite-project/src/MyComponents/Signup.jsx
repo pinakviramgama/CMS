@@ -13,10 +13,10 @@ import "react-toastify/dist/ReactToastify.css";
       const [loading, setLoading] = useState(false);
 
       const navigate = useNavigate();
-
 const handleSubmit = async (e) => {
   e.preventDefault();
-  const API = import.meta.env.VITE_API_URL || "https://cms-4-74hb.onrender.com";
+   const API =import.meta.env.VITE_API_URL || "https://cms-4-74hb.onrender.com";
+
 
   if (!name || !email || !password || !department || !semester) {
     toast.error("Please fill all fields!");
@@ -38,17 +38,20 @@ const handleSubmit = async (e) => {
 
   try {
     // 1️⃣ SIGNUP
-    const signupRes = await fetch(`${API}/api/auth/signup`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name,
-        email,
-        password,
-        department,
-        semester: semNumber,
-      }),
-    });
+    const signupRes = await fetch(
+      `${API}/api/auth/signup`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+          department,
+          semester: semNumber,
+        }),
+      }
+    );
 
     const signupData = await signupRes.json();
 
@@ -57,12 +60,15 @@ const handleSubmit = async (e) => {
       return;
     }
 
-    // 2️⃣ AUTO LOGIN AFTER SIGNUP
-    const loginRes = await fetch(`${API}/api/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+    // 2️⃣ LOGIN
+    const loginRes = await fetch(
+      `${API}/api/auth/login`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      }
+    );
 
     const loginData = await loginRes.json();
 
@@ -71,11 +77,12 @@ const handleSubmit = async (e) => {
       return;
     }
 
-    // SAVE TOKEN
+    // 🔥 THIS WAS MISSING
     localStorage.setItem("token", loginData.token);
 
     toast.success("Signup & login successful!");
     navigate(`/dept/${department}/sem/${semester}`);
+
   } catch (err) {
     console.error(err);
     toast.error("Server error");
@@ -83,7 +90,6 @@ const handleSubmit = async (e) => {
     setLoading(false);
   }
 };
-
 
 
       return (
