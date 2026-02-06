@@ -97,7 +97,8 @@ const SubjectPage = () => {
       formData.append("type", type);
 
       const res = await fetch(
-        `${API}/admin/${dept}/sem/${sem}/subject/${subjectName}/upload`,
+        // /pending-material/upload/:dept/:sem/:subjectName"
+        `${API}//${dept}/sem/${sem}/subject/${subjectName}/upload`,
         { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: formData }
       );
       const data = await res.json();
@@ -122,7 +123,8 @@ const SubjectPage = () => {
       formData.append("type", type);
 
       const res = await fetch(
-        `${API}/student/pending-material/upload/${dept}/${sem}/${subjectName}`,
+        // /pending-material/upload/:dept/:sem/:subjectName"
+        `${API}/pending-material/upload/${dept}/${sem}/${subjectName}`,
         { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: formData }
       );
       const data = await res.json();
