@@ -15,8 +15,7 @@ import "react-toastify/dist/ReactToastify.css";
       const navigate = useNavigate();
 const handleSubmit = async (e) => {
   e.preventDefault();
-   const API =import.meta.env.VITE_API_URL || "https://cms-4-74hb.onrender.com";
-
+  const API = import.meta.env.VITE_API_URL || "https://cms-4-74hb.onrender.com";
 
   if (!name || !email || !password || !department || !semester) {
     toast.error("Please fill all fields!");
@@ -38,51 +37,57 @@ const handleSubmit = async (e) => {
 
   try {
     // 1️⃣ SIGNUP
-    const signupRes = await fetch(
-      `${API}/api/auth/signup`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          email,
-          password,
-          department,
-          semester: semNumber,
-        }),
-      }
-    );
+    const signupRes = await fetch(`${API}/api/auth/signup`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name,
+        email,
+        password,
+        department,
+        semester: semNumber,
+      }),
+    });
 
     const signupData = await signupRes.json();
-
     if (!signupRes.ok) {
       toast.error(signupData.message || "Signup failed");
       return;
     }
 
-    // 2️⃣ LOGIN
-    const loginRes = await fetch(
-      `${API}/api/auth/login`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      }
-    );
+    // 2️⃣ AUTO LOGIN (SAFE)
+    const loginRes = await fetch(`${API}/api/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
 
     const loginData = await loginRes.json();
-
     if (!loginRes.ok) {
       toast.error(loginData.message || "Login failed");
       return;
     }
 
-    // 🔥 THIS WAS MISSING
+    // ✅ Save token & user info safely
     localStorage.setItem("token", loginData.token);
+    localStorage.setItem("name", loginData.name);
+    localStorage.setItem("userId", loginData.id);
+    localStorage.setItem("dept", loginData.department);
+    localStorage.setItem("sem", loginData.sem);
+    localStorage.setItem("role", loginData.role);
 
+    // ✅ Context update (agar context use kar raha hai)
+    const { setToken, setName, setDept, setSem } = useSemester();
+    setToken && setToken(loginData.token);
+    setName && setName(loginData.name);
+    setDept && setDept(loginData.department);
+    setSem && setSem(loginData.sem);
+
+    // ✅ Navigate last me
+    navigate(`/dept/${loginData.department}/sem/${loginData.sem}`);
+
+    // ✅ Toast last me
     toast.success("Signup & login successful!");
-    navigate(`/dept/${department}/sem/${semester}`);
-
   } catch (err) {
     console.error(err);
     toast.error("Server error");
@@ -90,6 +95,7 @@ const handleSubmit = async (e) => {
     setLoading(false);
   }
 };
+
 
 
       return (
