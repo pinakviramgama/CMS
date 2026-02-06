@@ -68,8 +68,8 @@ const fetchPendingLinks = async () => {
 
     const data = await res.json();
 
-    // ✅ Only keep pending ones
     const pendingOnly = (data || []).filter((item) => item.status === "pending");
+
     setPendingLinks(pendingOnly);
   } catch (err) {
     console.error(err);
@@ -210,6 +210,10 @@ const fetchPendingLinks = async () => {
                 <strong>Sem:</strong> {item.sem}
               </p>
 
+              <p><strong> Subject:</strong> {item.subject}</p>
+              <p><strong> Type:</strong> {item.type}</p>
+              <p><strong> Request by: </strong> {item?.uploadedBy?.name}</p>
+
               <a
                 href={
                   item.fileUrl.startsWith("http")
@@ -256,6 +260,10 @@ const fetchPendingLinks = async () => {
 
               <p>
                 <strong>Subject:</strong> {link.subjectName}
+              </p>
+
+               <p>
+                <strong>Request by :</strong> {link?.uploadedBy?.name}
               </p>
 
               <a
