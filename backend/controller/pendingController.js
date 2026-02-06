@@ -289,6 +289,31 @@ const getStudentLinksHistory = async (req, res) => {
   }
 };
 
+// ADMIN: reject pending material
+const rejectPendingMaterial = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { reason } = req.body;
+
+    if (!reason) return res.status(400).json({ message: "Reason required" });
+
+    const material = await PendingMaterial.findById(id);
+
+    if (!material)
+      return res.status(404).json({ message: "Pending material not found" });
+
+    material.status = "rejected";
+    material.rejectionReason = reason;
+
+    await material.save();
+
+    res.json({ message: "Material rejected (saved in history)" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Reject failed" });
+  }
+};
+
 module.exports = {
   uploadMaterialForApproval,
   getPendingMaterials,
@@ -299,4 +324,5 @@ module.exports = {
   approvePendingLink,
   rejectPendingLink,
   getStudentLinksHistory,
+  rejectPendingMaterial,
 };

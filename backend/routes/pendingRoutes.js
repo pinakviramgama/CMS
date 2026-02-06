@@ -10,6 +10,7 @@ const {
   approvePendingLink,
   getPendingLinks,
   getStudentLinksHistory,
+  rejectPendingMaterial,
 } = require("../controller/pendingController");
 
 const { protect } = require("../middleware/authMiddleware");
@@ -24,7 +25,8 @@ router.post(
   uploadMaterialForApproval,
 );
 router.post("/pending-materials/:id/approve", protect, approvePendingMaterial);
-router.post("/pending-materials/:id/reject", protect, rejectPendingLink);
+// ${API}/pending-materials/${id}/reject
+router.post("/pending-materials/:id/reject", protect, rejectPendingMaterial);
 router.get("/student/uploads", protect, getHistory);
 
 /* ===== LINK ROUTES ===== */

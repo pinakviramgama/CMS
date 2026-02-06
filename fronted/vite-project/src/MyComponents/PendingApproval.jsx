@@ -105,33 +105,29 @@ const fetchPendingLinks = async () => {
       toast.error(err.message);
     }
   };
+const rejectMaterial = async (id) => {
+  const reason = prompt("Reason for rejection?");
+  if (!reason) return toast.warn("Reason required");
 
-  const rejectMaterial = async (id) => {
-    const reason = prompt("Reason for rejection?");
-    if (!reason) return toast.warn("Reason required");
+  try {
+    const res = await fetch(`${API}/pending-materials/${id}/reject`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ reason }),
+    });
 
-    try {
-      const res = await fetch(
-        `${API}/pending-materials/${id}/reject`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ reason }),
-        }
-      );
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
-
-      toast.info("Material rejected");
-      setPendingMaterials((prev) => prev.filter((p) => p._id !== id));
-    } catch (err) {
-      toast.error(err.message);
-    }
-  };
+    toast.info("Material rejected");
+    setPendingMaterials((prev) => prev.filter((p) => p._id !== id));
+  } catch (err) {
+    toast.error(err.message);
+  }
+};
 
   /* ===================== APPROVE / REJECT LINK ===================== */
   const approveLink = async (id) => {
