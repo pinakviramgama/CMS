@@ -231,7 +231,7 @@ const rejectMaterial = async (id) => {
               </button>
 
               <button
-                className="btn btn-sm btn-danger"
+                className="btn btn-sm btn-danger px-3"
                 onClick={() => rejectMaterial(item._id)}
               >
                 Reject
@@ -266,7 +266,7 @@ const rejectMaterial = async (id) => {
                 href={link.url}
                 target="_blank"
                 rel="noreferrer"
-                className="btn btn-sm btn-outline-primary me-2"
+                className="btn btn-sm btn-primary me-2"
               >
                 Open Link
               </a>

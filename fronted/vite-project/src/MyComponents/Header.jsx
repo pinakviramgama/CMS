@@ -1,10 +1,11 @@
 import { Button, Container, Form, FormControl, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useSemester } from "./semesterContext";
+
+
 const Header = () => {
   const navigate = useNavigate();
-const { dept, sem, token, setToken, setName, setDept, setSem } = useSemester();
-
+  const { dept, sem, token, setToken, setName, setDept, setSem } = useSemester();
   const name = localStorage.getItem("name");
 
   const handleLogout = () => {
@@ -12,10 +13,8 @@ const { dept, sem, token, setToken, setName, setDept, setSem } = useSemester();
 
   setToken(null);
   setName(null);
-
   setDept(null);
   setSem(null);
-
   navigate("/login");
 };
 

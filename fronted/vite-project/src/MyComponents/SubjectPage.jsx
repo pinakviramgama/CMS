@@ -21,7 +21,9 @@ const SubjectPage = () => {
   const [webLinks, setWebLinks] = useState([]);
   const [pendingLinks, setPendingLinks] = useState([]);
   const [expandedTitles, setExpandedTitles] = useState({});
+  const [linkHistory, setLinkHistory] = useState([]);
 
+  const decodeSubject = decodeURIComponent(subjectName);
   const token = localStorage.getItem("token");
 
    const API =import.meta.env.VITE_API_URL || "https://cms-4-74hb.onrender.com";
@@ -95,8 +97,6 @@ const SubjectPage = () => {
       const formData = new FormData();
       formData.append("file", pdfFile);
       formData.append("type", type);
-      console.log(API);
-
 
       const res = await fetch(
         // /pending-material/upload/:dept/:sem/:subjectName"
@@ -214,7 +214,6 @@ const SubjectPage = () => {
         }
       );
       const data = await res.json();
-      console.log(data);
 
       if (!res.ok) throw new Error(data.message);
 
@@ -228,7 +227,7 @@ const SubjectPage = () => {
     fetchLinkHistory()
   };
 
-const [linkHistory, setLinkHistory] = useState([]);
+
 const fetchLinkHistory = async () => {
   try {
     const res = await fetch(`${API}/student/link-history`, {
@@ -237,10 +236,8 @@ const fetchLinkHistory = async () => {
       },
     });
 
-    console.log("Response Status:", res.status);
 
     const data = await res.json();
-    console.log("History Data:", data);
 
     setLinkHistory(data);
   } catch (err) {
@@ -249,7 +246,6 @@ const fetchLinkHistory = async () => {
 };
 
   useEffect(() => {
-  console.log("Fetching Link History...");
   fetchLinkHistory();
 }, []);
 
@@ -336,6 +332,10 @@ const fetchLinkHistory = async () => {
         })}
       </div>
     );
+  const filteredLinks = linkHistory.filter(
+  (link) => link.subjectName === decodeSubject
+);
+
 
   return (
     <div className="container mt-4">
@@ -421,10 +421,7 @@ const fetchLinkHistory = async () => {
         </ul>
       )}
 
-{/* PENDING LINKS */}
-<h5>Pending & History of Link Requests</h5>
-<hr />
-
+<h5>Submit URL Links for approval</h5>
 {/* Student Request Form */}
 {role === "student" && (
   <div className="card p-3 mb-3">
@@ -455,9 +452,16 @@ const fetchLinkHistory = async () => {
 
 <hr />
 
-{/* ADMIN VIEW → Pending Requests */}
-    <ul className="list-group mb-4">
-      {linkHistory.map((link) => (
+<h5>Pending & History of Link Requests</h5>
+{filteredLinks.length === 0 ? (
+  <p className="text-center text-muted">
+    No links submitted yet for this subject.
+  </p>
+) : (
+  <ul className="list-group mb-4">
+    {linkHistory
+      .filter((link) => link.subjectName === decodeSubject)
+      .map((link) => (
         <li
           key={link._id}
           className="list-group-item d-flex justify-content-between align-items-center"
@@ -477,10 +481,9 @@ const fetchLinkHistory = async () => {
               {link.status}
             </span>
 
-<div className="text-muted small">
-  Submitted on : {formatDate(link.createdAt)}
-</div>
-
+            <div className="text-muted small">
+              Submitted on : {formatDate(link.createdAt)}
+            </div>
 
             {link.status === "rejected" && link.rejectionReason && (
               <div className="text-danger small">
@@ -490,7 +493,8 @@ const fetchLinkHistory = async () => {
           </div>
         </li>
       ))}
-    </ul>
+  </ul>
+)}
 
 
     </div>

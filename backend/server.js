@@ -14,7 +14,6 @@ connectDB();
 
 const app = express();
 
-// ✅ Simple CORS (PERMANENT FIX)
 app.use(cors());
 
 app.use(express.json());

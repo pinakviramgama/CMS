@@ -38,7 +38,7 @@ const Signup = () => {
     setLoading(true);
 
     try {
-      // 1️⃣ SIGNUP
+      // Signup
       const signupRes = await fetch(`${API}/api/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -50,7 +50,7 @@ const Signup = () => {
         return;
       }
 
-      // 2️⃣ AUTO LOGIN
+      // Auto Login
       const loginRes = await fetch(`${API}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -62,21 +62,21 @@ const Signup = () => {
         return;
       }
 
-      // 3️⃣ UPDATE localStorage & CONTEXT
+      // update localStorage & context
       localStorage.setItem("token", loginData.token);
       localStorage.setItem("name", loginData.name);
       localStorage.setItem("dept", loginData.department);
       localStorage.setItem("sem", loginData.sem);
 
+      //updating semester context
       setToken(loginData.token);
       setUserName(loginData.name);
       setDept(loginData.department);
       setSem(loginData.sem);
 
-      // 4️⃣ NAVIGATE last
+      // Navigate to user's dept and sem
       navigate(`/dept/${loginData.department}/sem/${loginData.sem}`);
 
-      // 5️⃣ Toast last
       toast.success("Signup & login successful!");
     } catch (err) {
       console.error(err);

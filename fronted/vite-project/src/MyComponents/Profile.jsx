@@ -8,7 +8,6 @@ function Profile() {
 
   const token = localStorage.getItem("token");
   const name = localStorage.getItem("name");
-  const email = localStorage.getItem("email");
   const role = localStorage.getItem("role") || "student";
 
   const [subjects, setSubjects] = useState([]);
@@ -178,39 +177,47 @@ const renderUploadHistory = (list) => {
   if (!list.length) return <p className="text-muted">No uploads yet</p>;
 
   const items = showAllHistory ? list : list.slice(0, 5);
+  console.log(items);
+
 
   return (
     <div>
+
       <ul className="list-group">
         {items.map((p) => (
-          <li
-            key={p._id}
-            className="list-group-item d-flex justify-content-between align-items-center"
-          >
-            {/* Left side: title, type, rejection reason */}
-            <div>
-              <strong>{p.title}</strong> ({p.type})
-              {p.status === "rejected" && p.rejectionReason && (
-                <div className="text-danger small">Reason: {p.rejectionReason}</div>
-              )}
-            </div>
+<li
+  key={p._id}
+  className="list-group-item d-flex justify-content-between align-items-start"
+>
+  {/* Left side: Title + Sem + Subject */}
+  <div>
+    <strong>{p.title}</strong> ({p.type})
 
-            {/* Right side: semester + status */}
-            <div className="d-flex align-items-center gap-2">
-              <span className="small text-muted">Sem {p.sem || "N/A"}</span>
-              <span
-                className={`badge rounded-pill ${
-                  p.status === "pending"
-                    ? "bg-warning text-dark"
-                    : p.status === "approved"
-                    ? "bg-success"
-                    : "bg-danger"
-                }`}
-              >
-                {p.status.toUpperCase()}
-              </span>
-            </div>
-          </li>
+    <div className="small text-muted mt-1">
+      Sem: {p.sem || "N/A"} | Subject: {p.subject || "N/A"}
+    </div>
+
+    {p.status === "rejected" && p.rejectionReason && (
+      <div className="text-danger small mt-1">
+        Reason: {p.rejectionReason}
+      </div>
+    )}
+  </div>
+
+  {/* Right side: Status Badge */}
+  <span
+    className={`badge rounded-pill ${
+      p.status === "pending"
+        ? "bg-warning text-dark"
+        : p.status === "approved"
+        ? "bg-success"
+        : "bg-danger"
+    }`}
+  >
+    {p.status.toUpperCase()}
+  </span>
+</li>
+
         ))}
       </ul>
 
@@ -233,7 +240,6 @@ const renderUploadHistory = (list) => {
     <>
       <h1>Profile Page</h1>
       <p>Name: {name?.toUpperCase()}</p>
-      <p>Email: {email}</p>
 
       {role === "student" && (
         <div className="card p-3 mb-4">
@@ -260,10 +266,10 @@ const renderUploadHistory = (list) => {
             value={selectedSubject}
             onChange={(e) => setSelectedSubject(e.target.value)}
           >
-            {subjects.map((sub) => (
+            {subjects.length == 0 ? ( <option value="">No subjects</option> ) : (subjects.map((sub) => (
               <option key={sub.name || sub} value={sub.name || sub}>
                 {sub.name || sub}
-              </option>
+              </option>)
             ))}
           </select>
 
@@ -292,7 +298,7 @@ const renderUploadHistory = (list) => {
 
       {role === "student" && (
         <div className="mb-4">
-          <h5>Your Upload History</h5>
+          <h5>Your Upload History for PDFs</h5>
           {renderUploadHistory(uploadHistory)}
         </div>
       )}

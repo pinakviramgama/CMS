@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSemester } from "./semesterContext"; // ✅ Import context
 
@@ -14,8 +14,7 @@ const Login = () => {
 
   // ✅ Destructure only what exists in your context
   const { setDept, setSem, setToken, setName } = useSemester();
-
-   const API =import.meta.env.VITE_API_URL || "https://cms-4-74hb.onrender.com";
+  const API =import.meta.env.VITE_API_URL || "https://cms-4-74hb.onrender.com";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,9 +36,7 @@ const Login = () => {
       const data = await res.json();
 
       if (res.ok) {
-        toast.success("Login successful!");
-
-        // ✅ Save to localStorage
+        // Save to localStorage
         localStorage.setItem("token", data.token);
         localStorage.setItem("name", data.name);
         localStorage.setItem("userId", data.id);
@@ -47,15 +44,16 @@ const Login = () => {
         localStorage.setItem("sem", data.sem);
         localStorage.setItem("role", data.role);
 
-        // ✅ Update context
+        // Update context
         setToken && setToken(data.token);
         setName && setName(data.name);
         setDept && setDept(data.department);
         setSem && setSem(data.sem);
 
-        // ✅ Navigate to semester page
+        // Navigate to semester page
         toast.success("Login Successful")
         navigate(`/dept/${data.department}/sem/${data.sem}`);
+
       } else {
         toast.error(data.message || "Login failed!");
       }
@@ -69,7 +67,6 @@ const Login = () => {
 
   return (
     <>
-      <ToastContainer position="top-right" autoClose={3000} />
       <Container className="mt-5">
         <Row className="justify-content-md-center">
           <Col md={6}>
