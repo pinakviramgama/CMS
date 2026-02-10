@@ -95,10 +95,12 @@ const SubjectPage = () => {
       const formData = new FormData();
       formData.append("file", pdfFile);
       formData.append("type", type);
+      console.log(API);
+
 
       const res = await fetch(
         // /pending-material/upload/:dept/:sem/:subjectName"
-        `${API}//${dept}/sem/${sem}/subject/${subjectName}/upload`,
+        `${API}/admin/${dept}/sem/${sem}/subject/${subjectName}/upload`,
         { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: formData }
       );
       const data = await res.json();

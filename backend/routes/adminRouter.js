@@ -7,11 +7,12 @@ import upload from "../middleware/upload.js";
 const router = express.Router();
 
 router.post(
+  // `${API}/${dept}/sem/${sem}/subject/${subjectName}/upload`,
   "/:dept/sem/:sem/subject/:subjectName/upload",
-  upload.single("pdf"),
-  uploadMaterial,
   protect,
   verify,
+  upload.single("pdf"),
+  uploadMaterial,
 );
 
 export default router;
